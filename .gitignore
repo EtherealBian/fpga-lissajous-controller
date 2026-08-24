@@ -28,6 +28,11 @@ __pycache__/
 .venv/
 phase_sim/output/
 phase_sim/direct_output/
+vision/scope_8x8_nine_point_calibration.json
+vision/range_profiles.json
+vision/frequency_calibration.json
+vision/debug/
+vision/output/
 
 # 编辑器与操作系统
 .vscode/

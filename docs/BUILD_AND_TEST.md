@@ -35,6 +35,20 @@ python phase_sim/test_direct_calibration_sim.py
 python phase_sim/test_frequency_offset_sim.py
 ```
 
+## Jetson Nano 视觉程序
+
+视觉端依赖和运行方式：
+
+```bash
+python3 -m pip install -r vision/requirements.txt
+python3 vision/jetson_freq.py --standalone
+python3 vision/jetson_freq.py --display
+```
+
+Jetson 上应优先使用 JetPack 自带的 OpenCV/GStreamer。程序默认读取 `/dev/ttyTHS1`，波特率 921600，并从当前工作目录读取 `scope_8x8_nine_point_calibration.json`；参数和标定方法见 [`vision/README.md`](../vision/README.md)。
+
+当前归档缺少 `lissajous_phase_local.py`，因此仓库级自动检查验证 `jetson_freq.py` 的 UTF-8 编码、顶层 Python 语法、四个内嵌源码模块的独立编译以及 UART 帧编解码，不能执行完整导入或相位闭环硬件测试。
+
 ## Vivado
 
 独立综合检查脚本支持 Vivado 2019.2 和 2025.2：

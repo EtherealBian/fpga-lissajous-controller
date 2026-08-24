@@ -1,6 +1,6 @@
 # 算法与文件索引
 
-本文按“文件—算法—工程职责”列出仓库中的核心实现。可综合设计均位于 `rtl/`，测试平台位于 `sim/`。
+本文按“文件—算法—工程职责”列出仓库中的核心实现。可综合设计位于 `rtl/`，测试平台位于 `sim/`，Jetson Nano 视觉程序位于 `vision/`。
 
 ## 可综合 RTL
 
@@ -41,5 +41,16 @@
 | `tools/wireless_uart_host.py` | 数据包编解码、自检、串口交互参考实现 |
 | `phase_sim/direct_calibration_sim.py` | 独立晶振直接电气标定误差模型 |
 | `phase_sim/frequency_offset_sim.py` | 摄像头相位观测、鲁棒频偏估计和校正模型 |
+
+## Jetson Nano 视觉闭环
+
+| 文件或内部子系统 | 算法或功能 | 在系统中的职责 |
+|---|---|---|
+| `vision/jetson_freq.py` 主控层 | 摄像头采集、四档状态调度、粗测频融合、精扫会话、绝对相位搜索、完成后监控 | 接收 FPGA START 事件，组织完整视觉闭环并返回频率、判图和相位控制命令 |
+| 内嵌 `frequency_measure_core` | 九点分片透视校正、右侧包络折返点检测、周期候选拟合、MAD 剔除、八帧中值融合、100 Hz 量化 | 在 20～100 kHz 观察范围内估计输入频率 |
+| 内嵌 `range_switch_core` | 折返点/周期证据、多帧投票、迟滞阈值 | 在四档时基之间选择适合测频的观察窗口 |
+| 内嵌 `simple_uart_protocol` | CRC-8/ATM、串口收发线程、协议帧解析 | 与 FPGA 的 921600 bps UART 状态机互操作 |
+| 内嵌 `lissajous_judge_core` | 阈值分割、持久轨迹、全图白色占比、两帧投票 | 对 FPGA 的双侧 100 Hz 精扫测试点返回正确/错误判定 |
+| 外部 `lissajous_phase_local` | `Config`、`Rectifier`、`calculate_phase`、`annotate` 接口 | 负责相位提取和调试标注；原始归档缺失，当前不能直接复现完整相位补偿 |
 
 更完整的信号流和时钟域关系见 [系统架构](ARCHITECTURE.md)，命令字段见 [UART 协议](uart-protocol.md)。

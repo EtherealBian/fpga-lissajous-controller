@@ -1,15 +1,16 @@
 # 2026 年电赛 F 题：李萨如图形显示控制装置
 
-本项目为 **2026 年全国大学生电子设计竞赛江苏赛区赛（TI 杯）F 题省冠军作品**，开源部分实现李萨如图形控制装置的 FPGA 信号处理、双 DAC 输出、无线 UART 控制和仿真验证。
+本项目为 **2026 年全国大学生电子设计竞赛江苏赛区赛（TI 杯）F 题省冠军作品**，开源部分实现李萨如图形控制装置的 FPGA 信号处理、双 DAC 输出、无线 UART 控制、Jetson Nano 视觉测频闭环和仿真验证。
 
 - 竞赛成绩：江苏省 F 题省冠军
 - 开源作者：Ethereal
 - RTL：SystemVerilog，19 个可综合模块均含详细规范中文注释
+- 视觉端：`vision/jetson_freq.py`，Jetson Nano 单文件部署程序，含四档选档、八帧测频、精扫判图和相位闭环调度
 - 硬件基线：Mizar Z7 / XC7Z020、10 位并行 AD/DA、100 MHz 系统时钟、30 MHz 转换器时钟
 - 工具链：Vivado 2019.2/2025.2 独立综合检查；另保留 Vivado 2025.2 与 eLinx 3.0 实验构建脚本
 - 题目原文：[江苏赛区 F 题 PDF](docs/problem/2026-NUEDC-Jiangsu-F-Lissajous.pdf)
 
-> 仓库不含队员个人资料、比赛过程日志、工具缓存、厂商手册副本、生成比特流和未公开上位机视觉识别实现。工程未提供最终引脚约束，生成 bitstream 前必须按实际板卡补齐 XDC/PSF。
+> 仓库不含队员个人资料、比赛过程日志、工具缓存、厂商手册副本、生成比特流和现场摄像头标定数据。工程未提供最终引脚约束，生成 bitstream 前必须按实际板卡补齐 XDC/PSF。视觉程序依赖的 `lissajous_phase_local.py` 未在原始项目目录中找到，完整运行边界见 [Jetson 视觉说明](vision/README.md)。
 >
 > Windows 下建议把仓库克隆到纯英文路径；Vivado 2025.2 在含中文字符的工程路径中可能异常退出。
 
@@ -21,6 +22,7 @@
 - [赛题来源与要求对应](docs/PROBLEM_SOURCE.md)：官方来源、PDF 校验值、六项要求映射
 - [开源范围](docs/OPEN_SOURCE_SCOPE.md)：包含/排除内容与第三方材料说明
 - [注释规范](docs/COMMENT_STYLE.md)：RTL 中文注释与命名约定
+- [Jetson 视觉程序](vision/README.md)：视觉算法、环境、标定、运行方式与已知限制
 
 ## 当前信号通路
 
@@ -71,7 +73,7 @@ phase_step_out = round(phase_step_100k × output_frequency / 100 kHz)
 DAC1/DAC2 始终保持中值，KEY2/KEY3/KEY4 不产生 START，UART命令返回
 `NOT_CALIBRATED`。校准完成后按KEY2/KEY3/KEY4，只有DAC1输出由校准
 频率字换算的10 ms周期锯齿脉冲，并通过921600波特率UART
-向上位机发送 START。上位机返回识别频率范围，再发送独立的
+向 Jetson Nano 发送 START。`vision/jetson_freq.py` 返回识别频率范围，再发送独立的
 `SCAN_BEGIN` 后锯齿停止；随后每个频率/相位命令只更新DAC1无线DDS。
 DAC2始终继续输出KEY5选择的1 / 20.4 / 50 / 80.3 / 100 kHz固定测试音，
 不跟随SCAN变化。
@@ -173,6 +175,10 @@ AD2 目前仅保留作后续无线反馈接口，不参与有线 DPLL。
 - `rtl/status_leds.sv`：四个低有效 LED。
 
 旧的 `fractional_phase_calibrator.sv`、`phase_step_divider.sv` 和 `ad_da_clock_gen.sv` 已删除；有效设计中不存在过零检测通路，也不存在旧的 ODDR 输出回读结构。
+
+## Jetson Nano 视觉程序
+
+`vision/jetson_freq.py` 是现场运行的视觉端主程序。测频、选档、UART 和精扫判图子系统均以内嵌源码方式保存在单文件中，并含详细中文注释；部署和缺失相位模块的说明见 [vision/README.md](vision/README.md)。
 
 ## 仿真
 
