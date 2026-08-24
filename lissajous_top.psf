@@ -1,0 +1,54 @@
+# ==========================================================================
+#  eLinx 工程引脚约束文件 (PSF - Pin Specification File)
+#
+#  用法: 在本文件中定义 FPGA 引脚分配, eLinx 的 PACK/PLACE 阶段会自动读取。
+#
+#  生成方式:
+#    1. 在 eLinx GUI 中打开工程 → Pin Planner → 分配引脚 → 导出 .psf
+#    2. 或根据硬件原理图手动填写以下格式
+#
+#  格式:
+#    set_location_assignment PIN_XX -to signal_name
+#    set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to signal_name
+# ==========================================================================
+
+# ---- 时钟引脚 ----
+# set_location_assignment PIN_?? -to clk_in1
+# set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to clk_in1
+
+# ---- ADC 接口 ----
+# set_location_assignment PIN_?? -to ad_data[0]
+# ...
+# set_location_assignment PIN_?? -to ad_data[9]
+# set_location_assignment PIN_?? -to ad_clk
+# set_location_assignment PIN_?? -to ad_oe_n
+
+# ---- DAC 接口 ----
+# set_location_assignment PIN_?? -to da_data[0]
+# ...
+# set_location_assignment PIN_?? -to da_data[9]
+# set_location_assignment PIN_?? -to da_clk
+
+# ---- UART 接口 ----
+# set_location_assignment PIN_?? -to uart_rx
+# set_location_assignment PIN_?? -to uart_tx
+
+# ---- 按键 ----
+# set_location_assignment PIN_?? -to key1_n
+# set_location_assignment PIN_?? -to key2_n
+# set_location_assignment PIN_?? -to key3_n
+# set_location_assignment PIN_?? -to key4_n
+# set_location_assignment PIN_?? -to key5_n
+# set_location_assignment PIN_?? -to key6_n
+
+# ---- LED ----
+# set_location_assignment PIN_?? -to led1_n
+# set_location_assignment PIN_?? -to led2_n
+# set_location_assignment PIN_?? -to led3_n
+# set_location_assignment PIN_?? -to led4_n
+
+# ---- 蜂鸣器 (可选) ----
+# set_location_assignment PIN_?? -to buzzer_en
+
+puts "[PSF] 使用自动引脚分配 (未配置具体引脚约束)"
+puts "[PSF] 请通过 eLinx GUI → Pin Planner 完成引脚分配后更新此文件"

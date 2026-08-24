@@ -1,0 +1,36 @@
+# FPGA 工具缓存与生成物
+.Xil/
+*.jou
+*.log
+*.str
+*.dcp
+*.bit
+*.bin
+*.ltx
+*.vcd
+*.vvp
+*.wdb
+dfx_runtime.txt
+*.vqm
+*.place
+*.route
+*.psk
+*.fit.result
+vivado_output/
+elinx_output/
+build/
+icarus/
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+phase_sim/output/
+phase_sim/direct_output/
+
+# 编辑器与操作系统
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
