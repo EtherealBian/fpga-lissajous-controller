@@ -2,6 +2,12 @@
 
 [中文](#中文) · [English](#english)
 
+<p align="center">
+  <img src="docs/lissajous-hardware.jpg" width="720" alt="竞赛现场实物，示波器显示李萨如图形，桌面放有 FPGA 开发板和摄像头">
+  <br>
+  <em>竞赛现场实物 · Competition hardware setup</em>
+</p>
+
 ![FPGA Lissajous controller signal path](docs/project-overview.png)
 
 ## 中文
