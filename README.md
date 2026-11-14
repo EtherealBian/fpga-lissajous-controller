@@ -6,15 +6,25 @@
 
 ## 中文
 
-2026 年全国大学生电子设计竞赛江苏赛区 F 题省冠军作品。系统在 FPGA 上从输入信号估计频率和相位，再合成示波器 Y 轴波形。原始信号送入 X 轴，通过同相、正交和二倍频三种模式生成直线、圆或椭圆、以及横向“∞”图形。硬件基线为 Mizar Z7 / XC7Z020。
+2026 年全国大学生电子设计竞赛江苏赛区 F 题省一等奖作品。系统在 FPGA 上从输入信号估计频率和相位，再合成示波器 Y 轴波形。原始信号送入 X 轴，通过同相、正交和二倍频三种模式生成直线、圆或椭圆、以及横向“∞”图形。硬件基线为 Mizar Z7 / XC7Z020。
 
 ### 有线跟踪与双 DAC
+
+![有线锁相、双环校正与波形合成](docs/wired-dpll.png)
 
 - **捕获和跟踪**。AD1 去中值、限幅后进入 I/Q 相关器。DPLL 按 1 kHz 步长粗扫，再按 100 Hz 步长细扫。锁定后通过 CORDIC 提取相角，用分块相位变化估计频偏，用绝对相位误差继续校正相位。
 - **图形合成**。48 位 DDS 依据跟踪结果重新生成波形，经过相位模式选择和幅值缩放后由 DAC1 输出。相同通道增益下，同频正交对应圆，通道增益不同时对应椭圆。
 - **独立标定**。KEY4 启动 100 kHz 参考标定。标定器利用分块相关相位估计时基偏差并冻结校正后的频率字。DAC2 利用标定结果输出 1、20.4、50、80.3 或 100 kHz 测试音。无线 DDS 也使用该标定结果。
 
+### 100 kHz 时基标定
+
+![相关相位估计、频率字冻结与双路复用](docs/timebase-calibration.png)
+
+标定器按块计算复相关相角，对相邻块的相位增量做加权累加，再经迭代除法估计时基偏差。冻结后的频率字由 DAC2 测试音和无线 DDS 共用。
+
 ### 视觉控制
+
+![Jetson 图形分析、UART 帧与 FPGA 状态机](docs/camera-uart.png)
 
 Jetson Nano 从摄像头获取示波器图形，通过多帧融合和双侧精扫估计频率，再搜索绝对相位。FPGA 接收 UART 921600、8-N-1 命令，更新无线 DDS 的频率和相位。协议使用 `A5 5A` 帧头和 CRC-8/ATM，频率以 mHz 表示，角度使用 Q0.16 周。完整视觉相位闭环需要补回 `lissajous_phase_local.py` 并完成相机标定。 [UART 协议](docs/uart-protocol.md) · [Jetson 说明](vision/README.md)
 
@@ -39,15 +49,19 @@ UART 自检覆盖帧编解码和 CRC。RTL 测试平台覆盖 DPLL 捕获与跟�
 
 ## English
 
-This project won first place for Problem F in the 2026 Jiangsu regional electronic design contest. The FPGA estimates the input frequency and phase and synthesizes the oscilloscope Y signal. The original input drives X. In-phase, quadrature, and doubled-frequency modes produce a diagonal line, a circle or ellipse, and a horizontal figure eight. The wired hardware target is Mizar Z7 / XC7Z020.
+This project won a provincial first prize for Problem F in the 2026 Jiangsu regional electronic design contest. The FPGA estimates the input frequency and phase and synthesizes the oscilloscope Y signal. The original input drives X. In-phase, quadrature, and doubled-frequency modes produce a diagonal line, a circle or ellipse, and a horizontal figure eight. The wired hardware target is Mizar Z7 / XC7Z020.
 
 ### Wired tracking and dual DAC output
+
+[DPLL and waveform synthesis](docs/wired-dpll.png) · [Timebase calibration](docs/timebase-calibration.png)
 
 - **Acquisition and tracking.** AD1 samples are centered and clipped before I/Q correlation. The DPLL searches in 1 kHz coarse steps, then 100 Hz fine steps. After acquisition, CORDIC extracts the correlation phase. Block-to-block phase changes estimate frequency error, while absolute phase error guides phase correction.
 - **Waveform synthesis.** A 48-bit DDS regenerates the tracked waveform. Phase selection and amplitude scaling feed DAC1. A quadrature signal produces a circle when the X and Y gains match, and an ellipse when they differ.
 - **Independent calibration.** KEY4 starts calibration against a 100 kHz reference. The calibrator estimates the clock error from block correlation phases and freezes the corrected tuning word. DAC2 can output test tones at 1, 20.4, 50, 80.3, or 100 kHz. The wireless DDS also uses the calibrated timebase.
 
 ### Vision and UART
+
+[Camera pipeline, UART framing, and FPGA state machine](docs/camera-uart.png)
 
 Jetson Nano observes the oscilloscope through a camera, combines frame estimates, refines the frequency with a two-sided sweep, and searches for the absolute phase. The FPGA updates its wireless DDS over 921600-baud 8-N-1 UART. Packets use an `A5 5A` sync word and CRC-8/ATM. Commands encode frequency in mHz and phase in Q0.16 turns. Full phase feedback requires restoring `lissajous_phase_local.py` and calibrating the camera. [UART protocol](docs/uart-protocol.md) · [Jetson guide](vision/README.md)
 
