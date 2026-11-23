@@ -1,6 +1,10 @@
-# FPGA Lissajous Controller
+# FPGA 李萨如图形显示控制装置
 
-[中文](#中文) · [English](#english)
+**获奖荣誉：2026 年全国大学生电子设计竞赛 · 江苏赛区（TI 杯）F 题 · 省一等奖。**
+
+示波器的 X 轴接原始信号，Y 轴接 FPGA 合成的波形。Mizar Z7（XC7Z020）上的数字锁相环跟踪输入频率和相位，DDS 据此调整 Y 轴波形。示波器显示的图形取决于所选模式：同相时为斜线，正交时为圆或椭圆，二倍频时为横向“∞”。
+
+[有线跟踪与双 DAC](#有线跟踪与双-dac) · [视觉控制](#视觉控制) · [源码与验证](#源码与验证入口) · [English](#english)
 
 <p align="center">
   <img src="docs/lissajous-hardware.jpg" width="720" alt="竞赛现场实物，示波器显示李萨如图形，桌面放有 FPGA 开发板和摄像头">
@@ -11,8 +15,6 @@
 ![FPGA Lissajous controller signal path](docs/project-overview.png)
 
 ## 中文
-
-2026 年全国大学生电子设计竞赛江苏赛区 F 题省一等奖作品。系统在 FPGA 上从输入信号估计频率和相位，再合成示波器 Y 轴波形。原始信号送入 X 轴，通过同相、正交和二倍频三种模式生成直线、圆或椭圆、以及横向“∞”图形。硬件基线为 Mizar Z7 / XC7Z020。
 
 ### 有线跟踪与双 DAC
 
@@ -55,7 +57,9 @@ UART 自检覆盖帧编解码和 CRC。RTL 测试平台覆盖 DPLL 捕获与跟�
 
 ## English
 
-This project won a provincial first prize for Problem F in the 2026 Jiangsu regional electronic design contest. The FPGA estimates the input frequency and phase and synthesizes the oscilloscope Y signal. The original input drives X. In-phase, quadrature, and doubled-frequency modes produce a diagonal line, a circle or ellipse, and a horizontal figure eight. The wired hardware target is Mizar Z7 / XC7Z020.
+**Award: Provincial First Prize · Jiangsu regional contest (TI Cup), Problem F · 2026 National Undergraduate Electronics Design Contest.**
+
+The original signal drives the oscilloscope’s X input. On a Mizar Z7 (XC7Z020), the FPGA tracks the signal’s frequency and phase and synthesizes the Y input. The scope traces a diagonal line in phase, a circle or ellipse in quadrature, and a horizontal figure eight when Y runs at twice the input frequency.
 
 ### Wired tracking and dual DAC output
 
